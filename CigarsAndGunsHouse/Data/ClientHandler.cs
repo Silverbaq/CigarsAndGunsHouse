@@ -26,31 +26,44 @@ namespace CigarsAndGunsHouse
                 NetworkStream stream = _client.GetStream();
                 StreamReader reader = new StreamReader(stream);
                 StreamWriter writer = new StreamWriter(stream);
+                writer.AutoFlush = true;
 
                 // Welcome message
                 writer.WriteLine("Welcome to the auction house. Type your name press enter to join the auctions.");
-                writer.Write("Name: ");
-                writer.Flush();
-                
-                _clientName = reader.ReadLine();
-                
-                // Notify other clients that a new user has joined
-                _auctionHouse.BroadcastMessage($"{_clientName} has joined the auction.");
 
                 while (true) {
+                    writer.WriteLine("****** MENU ******\n" +
+                                     "You have the following options:\n" +
+                                     "[-]: create-profile\n" +
+                                     "[-]: login\n" +
+                                     "[-]: exit\n");
+                    
                     // Read client's command
                     string command = reader.ReadLine();
                     if (command == null) {
                         break;
                     }
-
+                    
                     // ******
                     // TODO: Implement user commands
                     // ******
                     switch (command)
                     {
-                        case "":
-                            _auctionHouse.BroadcastMessage($"{_clientName}: {command}");
+                        case "create-profile":
+                            writer.Write("Name: ");
+                            string createName = reader.ReadLine();
+                            writer.Write("Password: ");
+                            string createPassword = reader.ReadLine();
+                            string createResult = _auctionHouse.CreateProfile(createName, createPassword);
+                            writer.WriteLine(createResult);
+                            break;
+                        case "login":
+                            writer.Write("Name: ");
+                            string loginName = reader.ReadLine();
+                            writer.Write("Password: ");
+                            string loginPassword = reader.ReadLine();
+                            string loginResult = _auctionHouse.Login(loginName, loginPassword);
+                            writer.WriteLine(loginResult);
                             break;
                         default:
                             _auctionHouse.BroadcastMessage($"{_clientName}: {command}");
