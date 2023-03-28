@@ -17,7 +17,7 @@ namespace CigarsAndGunsHouse
             _client = client;
 
             // connects to the broadcast
-            _auctionHouse.BroadcastEvent += _broadcastEvent;
+            _auctionHouse.BroadcastEvent += _writeToClient;
         }
 
         public void RunClient()
@@ -88,11 +88,11 @@ namespace CigarsAndGunsHouse
                 _client.Close();
                 Console.WriteLine($"Client {((IPEndPoint)_client.Client.RemoteEndPoint).Address} disconnected.");
 
-                _auctionHouse.BroadcastEvent -= _broadcastEvent;
+                _auctionHouse.BroadcastEvent -= _writeToClient;
             }
         }
         
-        private void _broadcastEvent(string message)
+        private void _writeToClient(string message)
         {
             // Setup streams for input and output between the client and the server
             var stream = _client.GetStream();
