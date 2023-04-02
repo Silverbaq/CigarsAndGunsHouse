@@ -20,5 +20,12 @@ namespace CigarsAndGunsHouse.Controllers
         {
             return profiles.Find((x) => x.name == name && x.password == password);
         }
+
+        public Item AddItem(string title, string description, Profile profile)
+        {
+            Item item = new Item(title, description, profile);
+            profile.AddItem(item);
+            return item;
+        }
     }
 }

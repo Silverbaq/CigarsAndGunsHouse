@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using CigarsAndGunsHouse.Model;
 
 namespace CigarsAndGunsHouse
 {
@@ -9,7 +11,7 @@ namespace CigarsAndGunsHouse
     {
         private readonly AuctionHouse _auctionHouse;
         private readonly TcpClient _client;
-        private string _clientName;
+        private Profile _profile;
 
         public ClientHandler(TcpClient client, AuctionHouse auctionHouse)
         {
@@ -32,47 +34,127 @@ namespace CigarsAndGunsHouse
                 writer.WriteLine("Welcome to the auction house. Type your name press enter to join the auctions.");
 
                 while (true) {
-                    writer.WriteLine("****** MENU ******\n" +
-                                     "You have the following options:\n" +
-                                     "[-]: create-profile\n" +
-                                     "[-]: login\n" +
-                                     "[-]: exit\n");
-                    
-                    // Read client's command
-                    string command = reader.ReadLine();
-                    if (command == null) {
-                        break;
-                    }
-                    
-                    // ******
-                    // TODO: Implement user commands
-                    // ******
-                    switch (command)
+                    if (_profile == null)
                     {
-                        case "create-profile":
-                            writer.Write("Name: ");
-                            string createName = reader.ReadLine();
-                            writer.Write("Password: ");
-                            string createPassword = reader.ReadLine();
-                            string createResult = _auctionHouse.CreateProfile(createName, createPassword);
-                            writer.WriteLine(createResult);
+                        writer.WriteLine("****** MENU ******\n" +
+                                         "You have the following options:\n" +
+                                         "[-]: create-profile\n" +
+                                         "[-]: login\n" +
+                                         "[-]: exit\n");
+                        
+                        // Read client's command
+                        writer.Write("$: ");
+                        string command = reader.ReadLine();
+                        if (command == null) {
                             break;
-                        case "login":
-                            writer.Write("Name: ");
-                            string loginName = reader.ReadLine();
-                            writer.Write("Password: ");
-                            string loginPassword = reader.ReadLine();
-                            string loginResult = _auctionHouse.Login(loginName, loginPassword);
-                            writer.WriteLine(loginResult);
-                            break;
-                        default:
-                            _auctionHouse.BroadcastMessage($"{_clientName}: {command}");
-                            break;
-                    }
+                        }
+                    
+                        switch (command)
+                        {
+                            case "create-profile":
+                                writer.Write("Name: ");
+                                string createName = reader.ReadLine();
+                                writer.Write("Password: ");
+                                string createPassword = reader.ReadLine();
+                                string createResult = _auctionHouse.CreateProfile(createName, createPassword);
+                                writer.WriteLine(createResult);
+                                break;
+                            case "login":
+                                writer.Write("Name: ");
+                                string loginName = reader.ReadLine();
+                                writer.Write("Password: ");
+                                string loginPassword = reader.ReadLine();
+                                _profile = _auctionHouse.Login(loginName, loginPassword);
 
-                    // Exit if client types "exit" command
-                    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase)) {
-                        break;
+                                writer.WriteLine(_profile == null ? "Incorrect login" : $"Welcome {_profile.name}!");
+                                Thread.Sleep(2000);
+                                break;
+                            default:
+                                _auctionHouse.BroadcastMessage($"{_profile.name}: {command}");
+                                break;
+                        }
+
+                        // Exit if client types "exit" command
+                        if (command.Equals("exit", StringComparison.OrdinalIgnoreCase)) {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        writer.WriteLine("****** Main menu ******\n" +
+                                         "You have the following options:\n" +
+                                         "[+]: create item\n" +
+                                         "[+]: list items\n" +
+                                         "[+]: current auction\n" +
+                                         "[+]: add auction\n" +
+                                         "[+]: bid\n" +
+                                         "[+]: show wins\n" +
+                                         "[+]: exit\n");
+                        
+                        // Read client's command
+                        writer.Write("$: ");
+                        string command = reader.ReadLine();
+                        if (command == null) {
+                            break;
+                        }
+                    
+                        switch (command)
+                        {
+                            case "create item":
+                                writer.Write("Title: ");
+                                string title = reader.ReadLine();
+                                writer.Write("Description: ");
+                                string description = reader.ReadLine();
+                                bool createResult = _auctionHouse.CreateItem(title: title, description: description, _profile);
+                                if (createResult) writer.WriteLine($"Created successfully");
+                                else writer.WriteLine("Something is wrong, please try again");
+                                Thread.Sleep(1000);
+                                break;
+                            case "list items":
+                                _profile.items.ForEach((item) =>
+                                {
+                                    writer.WriteLine(item);    
+                                });
+                                
+                                Thread.Sleep(2000);
+                                break;
+                            case "current auction":
+                                string currentAuctionMessage = _auctionHouse.GetCurrentAuction();
+                                writer.Write($"{currentAuctionMessage}");
+                                Thread.Sleep(1000);
+                                break;
+                            case "add auction":
+                                writer.Write("Starting price: ");
+                                int startingPrice = int.Parse(reader.ReadLine() ?? string.Empty);
+                                
+                                writer.Write("Auction time running, in seconds: ");
+                                int timeRunning = int.Parse(reader.ReadLine() ?? string.Empty);
+
+                                writer.Write("Item id: ");
+                                string itemId = reader.ReadLine();
+                                
+                                bool result = _auctionHouse.AddAuction(startingPrice, timeRunning, itemId, _profile);
+                                if (result) writer.WriteLine("Auction was created!");
+                                else writer.WriteLine("Error! Try again.");
+                                break;
+                            case "bid":
+                                writer.Write("Amount: ");
+                                int amount = int.Parse(reader.ReadLine() ?? string.Empty);
+
+                                bool bidResult = _auctionHouse.Bid(amount, _profile);
+                                writer.WriteLine(bidResult ? "Bid was accepted!" : "Bid was to low");
+                                break;
+                            case "show wins":
+                                break;
+                            default:
+                                _auctionHouse.BroadcastMessage($"{_profile.name}: {command}");
+                                break;
+                        }
+
+                        // Exit if client types "exit" command
+                        if (command.Equals("exit", StringComparison.OrdinalIgnoreCase)) {
+                            break;
+                        }
                     }
                 }
 

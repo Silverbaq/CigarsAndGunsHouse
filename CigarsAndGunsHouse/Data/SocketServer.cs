@@ -13,6 +13,8 @@ namespace CigarsAndGunsHouse
         {
             _auctionHouse = new AuctionHouse();
             _listener = new TcpListener(IPAddress.Any, port);
+            var auctionThread = new Thread(_auctionHouse.RunAuctions);
+            auctionThread.Start();
         }
 
         private void AcceptClients() {

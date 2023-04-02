@@ -1,0 +1,6 @@
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/bin/Debug/CigarsAndGunsHouse.exe
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/bin/Debug/CigarsAndGunsHouse.pdb
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/obj/Debug/CigarsAndGunsHouse.csproj.AssemblyReference.cache
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/obj/Debug/CigarsAndGunsHouse.csproj.CoreCompileInputs.cache
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/obj/Debug/CigarsAndGunsHouse.exe
+/Users/stmo/Github/C#/CigarsAndGunsHouse/CigarsAndGunsHouse/obj/Debug/CigarsAndGunsHouse.pdb

@@ -3,11 +3,12 @@ namespace CigarsAndGunsHouse.Model
     public class Auction
     {
         Profile seller;
-        Profile winner;
-        int currentBid;
-        int startingPrice;
-        int timeRunning;
-        Item item;
+        public Profile winner;
+        public int currentBid;
+        public int startingPrice;
+        public int timeRunning;
+        public Item item;
+        public bool finished;
 
         public Auction(int startingPrice, int timeRunning, Item item, Profile seller)
         {
@@ -17,6 +18,7 @@ namespace CigarsAndGunsHouse.Model
             this.timeRunning = timeRunning;
             this.item = item;
             this.seller = seller;
+            finished = false;
         }
 
         public bool Bid(Profile profile, int amount)
@@ -29,6 +31,13 @@ namespace CigarsAndGunsHouse.Model
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"Auction: {item.title}\n" +
+                   $"Current bid: {currentBid}\n" +
+                   $"Current winner {winner.name}\n";
         }
     }
 }

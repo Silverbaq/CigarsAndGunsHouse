@@ -41,6 +41,8 @@
     <ItemGroup>
         <Compile Include="Data\AuctionHouse.cs" />
         <Compile Include="Data\ClientHandler.cs" />
+        <Compile Include="Data\Controllers\AuctionController.cs" />
+        <Compile Include="Data\Controllers\ItemController.cs" />
         <Compile Include="Data\Controllers\ProfileController.cs" />
         <Compile Include="Data\SocketServer.cs" />
         <Compile Include="Model\Auction.cs" />
