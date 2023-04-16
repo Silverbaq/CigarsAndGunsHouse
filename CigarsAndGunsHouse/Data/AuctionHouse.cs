@@ -1,6 +1,8 @@
+using System.Linq;
 using System.Threading;
 using CigarsAndGunsHouse.Controllers;
 using CigarsAndGunsHouse.Model;
+using CigarsAndGunsHouse.Repositories;
 
 namespace CigarsAndGunsHouse
 {
@@ -8,12 +10,15 @@ namespace CigarsAndGunsHouse
     {
         public delegate void BroadcastDelegate(string message);
         public event BroadcastDelegate BroadcastEvent;
-
-        private Auction _currentAuction = null;
-        private int _currentAuctionTimeLeft = 0;
         
-        private ProfileController _profileController = new ProfileController();
-        private AuctionController _auctionController = new AuctionController();
+        private int _currentAuctionTimeLeft = 0;
+
+        private static ProfileRepository _profileRepository = new ProfileRepository();
+        private static ItemRepository _itemRepository = new ItemRepository();
+        private static AuctionRepository _auctionRepository = new AuctionRepository();
+        
+        private ProfileController _profileController = new ProfileController(_profileRepository, _itemRepository);
+        private AuctionController _auctionController = new AuctionController(_auctionRepository);
 
         public AuctionHouse()
         {
@@ -24,7 +29,11 @@ namespace CigarsAndGunsHouse
         {
             _profileController.AddProfile("steffen", "123");
             Profile profile = _profileController.Login("steffen", "123");
-            _profileController.AddItem("something", "it works fine!", profile);
+            _profileController.AddItem("something", "it works fine!", profile.name);
+            _profileController.AddItem("something else", "it works great!", profile.name);
+            _profileController.AddItem("something completely different", "Fu*k! I does not work...", profile.name);
+            
+            profile.items.ForEach(item => _auctionController.AddAuction(100, 60, item, profile));
         }
 
         // TODO: implement auction house 
@@ -42,7 +51,7 @@ namespace CigarsAndGunsHouse
 
         public bool CreateItem(string title, string description, Profile profile)
         {
-            Item item = _profileController.AddItem(title, description, profile);
+            Item item = _profileController.AddItem(title, description, profile.name);
             if (item == null) return false;
             return true;
         }
@@ -56,19 +65,23 @@ namespace CigarsAndGunsHouse
 
         public string GetCurrentAuction()
         {
-            string message = $"Auction: {_currentAuction.item.title}\n" +
-                             $"Current bid: {_currentAuction.currentBid}\n" +
-                             $"Current winner {_currentAuction.winner.name}\n" +
+            string title = _auctionController.GetCurrentAuction().item.title;
+            string bid = _auctionController.GetCurrentAuction().currentBid.ToString(); 
+            string name = _auctionController.GetCurrentAuction().winner?.name;
+            
+            string message = $"Auction: {title}\n" +
+                             $"Current bid: {bid}\n" +
+                             $"Current winner: {name}\n" +
                              $"Time left: {_currentAuctionTimeLeft}\n\n";
             return message;
         }
 
         public bool Bid(int amount, Profile profile)
         {
-            bool result = _currentAuction.Bid(profile, amount);
+            bool result = _auctionController.GetCurrentAuction().Bid(profile, amount);
             if (result)
             {
-                BroadcastMessage($"{profile.name} just bid {amount} on {_currentAuction.item.title}");
+                BroadcastMessage($"{profile.name} just bid {amount} on {_auctionController.GetCurrentAuction().item.title}");
             }
             if (result && _currentAuctionTimeLeft < 10)
             {
@@ -82,8 +95,7 @@ namespace CigarsAndGunsHouse
         {
             while (true)
             {
-                _currentAuction = _auctionController.GetNextAuction();
-                if (_currentAuction == null)
+                if (!_auctionController.StartNextAuction())
                 {
                     BroadcastMessage("There is no current auctions. We will get back in 1 min.");
                     Thread.Sleep(60_000);
@@ -91,19 +103,19 @@ namespace CigarsAndGunsHouse
                 else
                 {
                     BroadcastMessage($"A new auction is starting\n" +
-                                     $"Item: {_currentAuction.item.title}\n" +
-                                     $"Starting at: {_currentAuction.startingPrice}\n" +
-                                     $"Is running for: {_currentAuction.timeRunning}");
+                                     $"Item: {_auctionController.GetCurrentAuction().item.title}\n" +
+                                     $"Starting at: {_auctionController.GetCurrentAuction().startingPrice}\n" +
+                                     $"Is running for: {_auctionController.GetCurrentAuction().timeRunning}");
 
-                    _currentAuctionTimeLeft = _currentAuction.timeRunning;
-                    while (!_currentAuction.finished)
+                    _currentAuctionTimeLeft = _auctionController.GetCurrentAuction().timeRunning;
+                    while (!_auctionController.GetCurrentAuction().finished)
                     {
                         _currentAuctionTimeLeft -= 1;
                         if (_currentAuctionTimeLeft == 0)
                         {
-                            _currentAuction.finished = true;
+                            _auctionController.GetCurrentAuction().finished = true;
                             BroadcastMessage($"Gravel: Sold!");
-                            BroadcastMessage($"{_currentAuction.winner} won {_currentAuction.item.title} for {_currentAuction.currentBid}");
+                            BroadcastMessage($"{_auctionController.GetCurrentAuction().winner} won {_auctionController.GetCurrentAuction().item.title} for {_auctionController.GetCurrentAuction().currentBid}");
                         }
                         else
                         {

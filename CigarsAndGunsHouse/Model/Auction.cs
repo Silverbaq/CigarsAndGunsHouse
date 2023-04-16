@@ -2,7 +2,8 @@ namespace CigarsAndGunsHouse.Model
 {
     public class Auction
     {
-        Profile seller;
+        public string id;
+        public Profile seller;
         public Profile winner;
         public int currentBid;
         public int startingPrice;

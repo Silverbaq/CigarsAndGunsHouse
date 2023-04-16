@@ -26,5 +26,10 @@ namespace CigarsAndGunsHouse.Model
         {
             items.Add(item);
         }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 }

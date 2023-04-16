@@ -6,8 +6,8 @@ namespace CigarsAndGunsHouse.Model
     {
         public string id;
         public string title;
-        string description;
-        private Profile owner;
+        public string description;
+        public Profile owner;
 
         public Item(string title, string description, Profile owner)
         {
