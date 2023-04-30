@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using CigarsAndGunsHouse.Data.Repositories;
 using CigarsAndGunsHouse.Model;
-using CigarsAndGunsHouse.Repositories;
 
-namespace CigarsAndGunsHouse.Controllers
+namespace CigarsAndGunsHouse.Data.Controllers
 {
     public class AuctionController
     {

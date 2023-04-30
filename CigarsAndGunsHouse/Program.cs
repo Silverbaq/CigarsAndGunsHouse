@@ -1,4 +1,6 @@
-﻿namespace CigarsAndGunsHouse
+﻿using CigarsAndGunsHouse.Data;
+
+namespace CigarsAndGunsHouse
 {
     internal class Program
     {

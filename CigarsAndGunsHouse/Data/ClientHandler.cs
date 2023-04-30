@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using CigarsAndGunsHouse.Model;
 
-namespace CigarsAndGunsHouse
+namespace CigarsAndGunsHouse.Data
 {
     public class ClientHandler
     {

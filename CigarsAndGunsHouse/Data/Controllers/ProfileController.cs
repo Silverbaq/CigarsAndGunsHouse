@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
+using CigarsAndGunsHouse.Data.Repositories;
 using CigarsAndGunsHouse.Model;
-using CigarsAndGunsHouse.Repositories;
 
-namespace CigarsAndGunsHouse.Controllers
+namespace CigarsAndGunsHouse.Data.Controllers
 {
     public class ProfileController
     {

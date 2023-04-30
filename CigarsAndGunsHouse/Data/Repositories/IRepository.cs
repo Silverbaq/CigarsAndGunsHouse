@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CigarsAndGunsHouse.Repositories
+namespace CigarsAndGunsHouse.Data.Repositories
 {
     public interface IRepository<T>
     {

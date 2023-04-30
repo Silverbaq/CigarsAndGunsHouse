@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CigarsAndGunsHouse.Model;
 
-namespace CigarsAndGunsHouse.Repositories
+namespace CigarsAndGunsHouse.Data.Repositories
 {
     public class AuctionRepository : IRepository<Auction>
     {

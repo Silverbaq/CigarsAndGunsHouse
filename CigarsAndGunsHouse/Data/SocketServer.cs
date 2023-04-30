@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CigarsAndGunsHouse
+namespace CigarsAndGunsHouse.Data
 {
     public class SocketServer {
         private readonly TcpListener _listener;

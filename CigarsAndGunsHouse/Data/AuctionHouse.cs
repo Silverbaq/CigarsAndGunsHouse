@@ -1,10 +1,9 @@
-using System.Linq;
 using System.Threading;
-using CigarsAndGunsHouse.Controllers;
+using CigarsAndGunsHouse.Data.Controllers;
+using CigarsAndGunsHouse.Data.Repositories;
 using CigarsAndGunsHouse.Model;
-using CigarsAndGunsHouse.Repositories;
 
-namespace CigarsAndGunsHouse
+namespace CigarsAndGunsHouse.Data
 {
     public class AuctionHouse
     {
