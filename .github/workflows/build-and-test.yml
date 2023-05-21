@@ -1,0 +1,28 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Mono
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'  # Replace with your desired Mono version
+
+      - name: Build and test application
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet test --no-restore --verbosity normal
