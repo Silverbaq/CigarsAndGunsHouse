@@ -10,19 +10,19 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Mono
+      - name: Set up MSBuild
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'  # Replace with your desired Mono version
+          dotnet-version: '6.0.x'  # Replace with your desired .NET version
 
       - name: Build and test application
         run: |
           dotnet restore
-          dotnet build --configuration Release
+          msbuild /p:Configuration=Release /p:TargetFramework=net48
           dotnet test --no-restore --verbosity normal
