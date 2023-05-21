@@ -7,10 +7,10 @@ namespace CigarsAndGunsHouse.Data.Controllers
     public class ProfileController
     {
         //private List<Profile> profiles = new List<Profile>();
-        private ProfileRepository _profileRepository;
+        private IRepository<Profile> _profileRepository;
         private ItemRepository _itemRepository;
 
-        public ProfileController(ProfileRepository profileRepository, ItemRepository itemRepository)
+        public ProfileController(IRepository<Profile> profileRepository, ItemRepository itemRepository)
         {
             _profileRepository = profileRepository;
             _itemRepository = itemRepository;
